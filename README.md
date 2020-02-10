@@ -1,12 +1,12 @@
 # Table of Contents
 Automatically generate a table of contents from the headings on the page
 
-[Getting Started](#getting-started) | [Styling](#styling-tabby) | [Keyboard Navigation](#keyboard-navigation) | [API](#api) | [What's New](#whats-new) | [Browser Compatibility](#browser-compatibility) | [License](#license)
+[Getting Started](#getting-started) | [API](#options-and-settings) | [Browser Compatibility](#browser-compatibility) | [License](#license)
 
 
 ## Getting Started
 
-### 1. Include `tableOfContents.js` on your site.
+### 1. Include Table of Contents on your site.
 
 ```html
 <script src="path/to/table-of-contents.js"></script>
@@ -38,7 +38,7 @@ You can use any selectors you want. The example below uses data attributes.
 
 *__Note:__ headings without an ID will have one automatically generated based on the heading content.*
 
-### 3. Initialize `tableOfContents()`
+### 3. Initialize Table of Contents
 
 In the footer of your page, after the content, initialize Table of Contents by passing in two arguments: the table of contents element selector, and content selector.
 

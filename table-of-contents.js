@@ -19,8 +19,8 @@ var tableOfContents = function (content, target, options) {
 
 	// Settings & Defaults
 	var defaults = {
-		heading: 'Table of Contents',
 		levels: 'h2, h3, h4, h5, h6',
+		heading: 'Table of Contents',
 		headingLevel: 'h2',
 		listType: 'ul'
 	};
