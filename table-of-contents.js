@@ -1,4 +1,3 @@
-
 /*! tableOfContents.js v1.0.0 | (c) 2020 Chris Ferdinandi | MIT License | http://github.com/cferdinandi/table-of-contents */
 
 /*
@@ -7,7 +6,7 @@
  * @param  {String} target  The selector for the container to render the table of contents into
  * @param  {Object} options An object of user options [optional]
  */
-var tableOfContents = function (content, target, options) {
+var tableOfContents = function (content, target, options, beforeScroll, afterScroll) {
 	//
 	// Variables
 	//
@@ -20,8 +19,9 @@ var tableOfContents = function (content, target, options) {
 	// Settings & Defaults
 	var defaults = {
 		levels: 'h2, h3, h4, h5, h6',
-		heading: 'Table of Contents',
+		heading: null,
 		headingLevel: 'h2',
+		headerOffset: 0,
 		listType: 'ul',
 	};
 	var settings = {};
@@ -115,11 +115,18 @@ var tableOfContents = function (content, target, options) {
 
 		// Cache the number of headings
 		var len = headings.length - 1;
+		var heading;
+		if (typeof settings.heading === 'undefined' || !settings.heading) {
+			heading = '';
+		} else {
+			heading = '<' + settings.heading.headingLevel + '>' + settings.heading.text + '</' + settings.heading.headingLevel + '>'
+		}
 
-		// Inject the HTML into the DOM
-		toc.innerHTML = '<' + settings.headingLevel + '>' + settings.heading + '</' + settings.headingLevel + '>'
-			+ '<' + settings.listType + '>'
-			+ Array.prototype.map.call(headings, function (heading, index) {
+
+		//Inject the HTML into the DOM
+		toc.innerHTML = heading +
+			'<' + settings.listType + '>' +
+			Array.prototype.map.call(headings, function (heading, index) {
 				// Add an ID if one is missing
 				createID(heading);
 
@@ -131,10 +138,10 @@ var tableOfContents = function (content, target, options) {
 
 				// Generate the HTML
 				html
-					+= '<li>'
-					+ '<a href="#' + heading.id + '">'
-					+ heading.innerHTML.trim()
-					+ '</a>';
+					+= '<li>' +
+					'<a href="#' + heading.id + '">' +
+					heading.innerHTML.trim() +
+					'</a>';
 
 				// If the last item, close it all out
 				if (index === len) {
@@ -142,8 +149,8 @@ var tableOfContents = function (content, target, options) {
 				}
 
 				return html;
-			}).join('')
-			+ '</' + settings.listType + '>';
+			}).join('') +
+			'</' + settings.listType + '>';
 	};
 
 	/**
@@ -162,17 +169,15 @@ var tableOfContents = function (content, target, options) {
 		injectTOC();
 	};
 
-	//
-	// Initialize the script
-	//
 
-	init();
-	addSoothScrolls();
-
-	function addSoothScrolls() {
+	/**  
+	* Implements the smooth scroll option
+	*/
+	function addSmoothScroll() {
 		document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 			anchor.addEventListener('click', function (e) {
 				e.preventDefault();
+				beforeScroll();
 				const anchor = e.target.href
 				const element = document.getElementById(anchor.split('#')[1]);
 				const headerOffset = options.headerOffset;
@@ -183,7 +188,29 @@ var tableOfContents = function (content, target, options) {
 					top: offsetPosition,
 					behavior: options.smooth ? "smooth" : "auto",
 				});
+				scrollEndListener();
+
 			});
 		});
 	}
+
+	/**
+	 * Listens for the end of the scroll
+	 */
+	function scrollEndListener() {
+		let position = null
+		const checkIfScrollIsStatic = setInterval(() => {
+			if (position === window.scrollY) {
+				clearInterval(checkIfScrollIsStatic)
+				afterScroll();
+			}
+			position = window.scrollY
+		}, 50)
+	}
+
+	/**
+	 * Execute the script initialization, after that, add the smooth scrolls to each anchor
+	 */
+	init();
+	addSmoothScroll();
 };
