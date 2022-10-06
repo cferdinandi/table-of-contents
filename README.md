@@ -1,7 +1,7 @@
 # Table of Contents
 Automatically generate a table of contents from the headings on the page
 
-**[Demo](https://cferdinandi.github.io/table-of-contents/)**
+**[Demo](https://mikelgmh.github.io/table-of-contents/)**
 
 [Getting Started](#getting-started) | [Options & Settings](#options-and-settings) | [Browser Compatibility](#browser-compatibility) | [License](#license)
 
