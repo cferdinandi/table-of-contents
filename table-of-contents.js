@@ -1,3 +1,4 @@
+
 /*! tableOfContents.js v1.0.0 | (c) 2020 Chris Ferdinandi | MIT License | http://github.com/cferdinandi/table-of-contents */
 
 /*
@@ -7,7 +8,6 @@
  * @param  {Object} options An object of user options [optional]
  */
 var tableOfContents = function (content, target, options) {
-
 	//
 	// Variables
 	//
@@ -22,13 +22,12 @@ var tableOfContents = function (content, target, options) {
 		levels: 'h2, h3, h4, h5, h6',
 		heading: 'Table of Contents',
 		headingLevel: 'h2',
-		listType: 'ul'
+		listType: 'ul',
 	};
 	var settings = {};
 
 	// Placeholder for headings
 	var headings;
-
 
 	//
 	// Methods
@@ -88,7 +87,6 @@ var tableOfContents = function (content, target, options) {
 	 * @return {String}        The HTML
 	 */
 	var getStartingHTML = function (diff, index) {
-
 		// If indenting
 		if (diff > 0) {
 			return getIndent(diff);
@@ -105,14 +103,12 @@ var tableOfContents = function (content, target, options) {
 		}
 
 		return '';
-
 	};
 
 	/**
 	 * Inject the table of contents into the DOM
 	 */
 	var injectTOC = function () {
-
 		// Track the current heading level
 		var level = headings[0].tagName.slice(1);
 		var startingLevel = level;
@@ -121,43 +117,39 @@ var tableOfContents = function (content, target, options) {
 		var len = headings.length - 1;
 
 		// Inject the HTML into the DOM
-		toc.innerHTML =
-			'<' + settings.headingLevel + '>' + settings.heading + '</' + settings.headingLevel + '>' +
-			'<' + settings.listType + '>' +
-				Array.prototype.map.call(headings, function (heading, index) {
+		toc.innerHTML = '<' + settings.headingLevel + '>' + settings.heading + '</' + settings.headingLevel + '>'
+			+ '<' + settings.listType + '>'
+			+ Array.prototype.map.call(headings, function (heading, index) {
+				// Add an ID if one is missing
+				createID(heading);
 
-					// Add an ID if one is missing
-					createID(heading);
+				// Check the heading level vs. the current list
+				var currentLevel = heading.tagName.slice(1);
+				var levelDifference = currentLevel - level;
+				level = currentLevel;
+				var html = getStartingHTML(levelDifference, index);
 
-					// Check the heading level vs. the current list
-					var currentLevel = heading.tagName.slice(1);
-					var levelDifference = currentLevel - level;
-					level = currentLevel;
-					var html = getStartingHTML(levelDifference, index);
+				// Generate the HTML
+				html
+					+= '<li>'
+					+ '<a href="#' + heading.id + '">'
+					+ heading.innerHTML.trim()
+					+ '</a>';
 
-					// Generate the HTML
-					html +=
-						'<li>' +
-							'<a href="#' + heading.id + '">' +
-								heading.innerHTML.trim() +
-							'</a>';
+				// If the last item, close it all out
+				if (index === len) {
+					html += getOutdent(Math.abs(startingLevel - currentLevel));
+				}
 
-					// If the last item, close it all out
-					if (index === len) {
-						html += getOutdent(Math.abs(startingLevel - currentLevel));
-					}
-
-					return html;
-
-				}).join('') +
-			'</' + settings.listType + '>';
+				return html;
+			}).join('')
+			+ '</' + settings.listType + '>';
 	};
 
 	/**
 	 * Initialize the script
 	 */
 	var init = function () {
-
 		// Merge any user settings into the defaults
 		merge(options || {});
 
@@ -168,14 +160,30 @@ var tableOfContents = function (content, target, options) {
 
 		// Inject the table of contents
 		injectTOC();
-
 	};
-
 
 	//
 	// Initialize the script
 	//
 
 	init();
+	addSoothScrolls();
 
+	function addSoothScrolls() {
+		document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+			anchor.addEventListener('click', function (e) {
+				e.preventDefault();
+				const anchor = e.target.href
+				const element = document.getElementById(anchor.split('#')[1]);
+				const headerOffset = options.headerOffset;
+				const elementPosition = element.getBoundingClientRect().top;
+				const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+				// We're not using scrollIntoView because we want to apply an offset
+				window.scrollTo({
+					top: offsetPosition,
+					behavior: options.smooth ? "smooth" : "auto",
+				});
+			});
+		});
+	}
 };

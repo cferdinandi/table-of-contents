@@ -61,7 +61,9 @@ tableOfContents('[data-content]', '[data-toc]', {
 	levels: 'h2, h3, h4, h5, h6', // The heading levels to generate a table of contents from
 	heading: 'Table of Contents', // The heading text for the table of contents list
 	headingLevel: 'h2', // The level to use for the heading for the table of contents list
-	listType: 'ul' // The list type to use for the table of contents
+	listType: 'ul', // The list type to use for the table of contents
+	headerOffset: 50, // The number in pixels to apply a space (useful for sticky headers)
+	smooth: true // Smooth scroll
 });
 ```
 
