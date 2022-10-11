@@ -107,7 +107,7 @@ var tableOfContents = function (content, target, options, beforeScroll, afterScr
 	};
 
 	var addTopMargin = function (element) {
-		element.style.scrollMarginTop =  settings.headerOffset + 'px';
+		element.style.scrollMarginTop = settings.headerOffset + 'px';
 	}
 
 	/**
@@ -127,7 +127,6 @@ var tableOfContents = function (content, target, options, beforeScroll, afterScr
 			heading = '<' + settings.heading.headingLevel + '>' + settings.heading.text + '</' + settings.heading.headingLevel + '>'
 		}
 
-		console.log(settings.smooth)
 		if (settings.smooth) {
 			addSmoothScroll(heading);
 		}
@@ -147,11 +146,10 @@ var tableOfContents = function (content, target, options, beforeScroll, afterScr
 				var html = getStartingHTML(levelDifference, index);
 
 				// Generate the HTML
-				console.log(settings.headerOffset)
 				if (settings.headerOffset) {
 					addTopMargin(heading);
 				}
-			
+
 				html
 					+= '<li>' +
 					'<a href="#' + heading.id + '">' +
@@ -185,7 +183,6 @@ var tableOfContents = function (content, target, options, beforeScroll, afterScr
 	};
 
 	function addSmoothScroll() {
-		console.log("Adding smooth scroll")
 		document.querySelector("html").style.scrollBehavior = "smooth";
 	}
 
@@ -235,5 +232,5 @@ var tableOfContents = function (content, target, options, beforeScroll, afterScr
 	 * Execute the script initialization, after that, add the smooth scrolls to each anchor
 	 */
 	init();
-	//addSmoothScroll();
+
 };
