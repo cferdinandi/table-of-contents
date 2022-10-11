@@ -23,6 +23,7 @@ var tableOfContents = function (content, target, options, beforeScroll, afterScr
 		headingLevel: 'h2',
 		headerOffset: 0,
 		listType: 'ul',
+		smooth: true,
 	};
 	var settings = {};
 
@@ -105,6 +106,10 @@ var tableOfContents = function (content, target, options, beforeScroll, afterScr
 		return '';
 	};
 
+	var addTopMargin = function (element) {
+		element.style.scrollMarginTop =  settings.headerOffset + 'px';
+	}
+
 	/**
 	 * Inject the table of contents into the DOM
 	 */
@@ -122,6 +127,11 @@ var tableOfContents = function (content, target, options, beforeScroll, afterScr
 			heading = '<' + settings.heading.headingLevel + '>' + settings.heading.text + '</' + settings.heading.headingLevel + '>'
 		}
 
+		console.log(settings.smooth)
+		if (settings.smooth) {
+			addSmoothScroll(heading);
+		}
+
 
 		//Inject the HTML into the DOM
 		toc.innerHTML = heading +
@@ -137,6 +147,11 @@ var tableOfContents = function (content, target, options, beforeScroll, afterScr
 				var html = getStartingHTML(levelDifference, index);
 
 				// Generate the HTML
+				console.log(settings.headerOffset)
+				if (settings.headerOffset) {
+					addTopMargin(heading);
+				}
+			
 				html
 					+= '<li>' +
 					'<a href="#' + heading.id + '">' +
@@ -169,30 +184,38 @@ var tableOfContents = function (content, target, options, beforeScroll, afterScr
 		injectTOC();
 	};
 
+	function addSmoothScroll() {
+		console.log("Adding smooth scroll")
+		document.querySelector("html").style.scrollBehavior = "smooth";
+	}
+
+	function addScrollMargin() {
+
+	}
 
 	/**  
 	* Implements the smooth scroll option
 	*/
-	function addSmoothScroll() {
-		document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-			anchor.addEventListener('click', function (e) {
-				e.preventDefault();
-				beforeScroll();
-				const anchor = e.target.href
-				const element = document.getElementById(anchor.split('#')[1]);
-				const headerOffset = options.headerOffset;
-				const elementPosition = element.getBoundingClientRect().top;
-				const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-				// We're not using scrollIntoView because we want to apply an offset
-				window.scrollTo({
-					top: offsetPosition,
-					behavior: options.smooth ? "smooth" : "auto",
-				});
-				scrollEndListener();
+	// function addSmoothScroll() {
+	// 	document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+	// 		anchor.addEventListener('click', function (e) {
+	// 			e.preventDefault();
+	// 			beforeScroll();
+	// 			const anchor = e.target.href
+	// 			const element = document.getElementById(anchor.split('#')[1]);
+	// 			const headerOffset = options.headerOffset;
+	// 			const elementPosition = element.getBoundingClientRect().top;
+	// 			const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+	// 			// We're not using scrollIntoView because we want to apply an offset
+	// 			window.scrollTo({
+	// 				top: offsetPosition,
+	// 				behavior: options.smooth ? "smooth" : "auto",
+	// 			});
+	// 			scrollEndListener();
 
-			});
-		});
-	}
+	// 		});
+	// 	});
+	// }
 
 	/**
 	 * Listens for the end of the scroll
@@ -212,5 +235,5 @@ var tableOfContents = function (content, target, options, beforeScroll, afterScr
 	 * Execute the script initialization, after that, add the smooth scrolls to each anchor
 	 */
 	init();
-	addSmoothScroll();
+	//addSmoothScroll();
 };
